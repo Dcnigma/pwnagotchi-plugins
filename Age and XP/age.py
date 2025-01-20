@@ -55,7 +55,8 @@ class ExpAndAgePlugin(plugins.Plugin):
             try:
                 self.load_exp_data(FILE_SAVE_EXP)
             except:
-                logging.error(TAG + " Failed to load EXP data. Recalculating.")
+                logging.error(TAG + " Failed to load EXP data. 
+Recalculating.")
                 self.calculateInitialXP = True
         else:
             self.save_exp_data(FILE_SAVE_EXP)
@@ -65,7 +66,8 @@ class ExpAndAgePlugin(plugins.Plugin):
             try:
                 self.load_age_data(FILE_SAVE_AGE)
             except:
-                logging.error(TAG + " Failed to load AGE data. Resetting age.")
+                logging.error(TAG + " Failed to load AGE data. Resetting 
+age.")
                 self.reset_age()
         else:
             self.reset_age()
@@ -117,7 +119,8 @@ class ExpAndAgePlugin(plugins.Plugin):
         self.strength = self.exp * self.lv * 0.05
 
     def calculate_initial_exp(self, agent):
-        """Calculates initial EXP based on saved access points and handshakes."""
+        """Calculates initial EXP based on saved access points and 
+handshakes."""
         initial_exp = 0
         try:
             unique_aps = agent.aps.get_unique()
@@ -144,7 +147,8 @@ class ExpAndAgePlugin(plugins.Plugin):
             view.set('face', self.face_levelup)
         except Exception as e:
             logging.error(TAG + f" Error displaying level-up face: {e}")
-            view.set('face', FACE_LEVELUP)  # Fallback to default face if there's an error
+            view.set('face', FACE_LEVELUP)  # Fallback to default face if 
+there's an error
      
         view.set('status', "Level Up!")
         view.update(force=True)
@@ -207,7 +211,8 @@ class ExpAndAgePlugin(plugins.Plugin):
         """Saves AGE data to a file."""
         data = {
             JSON_KEY_AGE_DAYS: self.age_days,
-            "birth_date": self.birth_date.strftime("%Y-%m-%d") if self.birth_date else None
+            "birth_date": self.birth_date.strftime("%Y-%m-%d") if 
+self.birth_date else None
         }
         with open(file_path, 'w') as f:
             json.dump(data, f, indent=4)
@@ -217,30 +222,49 @@ class ExpAndAgePlugin(plugins.Plugin):
         with open(file_path, 'r') as f:
             data = json.load(f)
             self.age_days = data[JSON_KEY_AGE_DAYS]
-            self.birth_date = datetime.strptime(data["birth_date"], "%Y-%m-%d") if data["birth_date"] else None
+            self.birth_date = datetime.strptime(data["birth_date"], 
+"%Y-%m-%d") if data["birth_date"] else None
 
     # UI Integration
     def on_ui_setup(self, ui):
         # Access the configuration after plugin setup
-        self.face_levelup = self.options["levelup"] if "levelup" in self.options else FACE_LEVELUP
+        self.face_levelup = self.options["levelup"] if "levelup" in 
+self.options else FACE_LEVELUP
 
-        ui.add_element('Lv', LabeledValue(color=BLACK, label='Lv', value="0",
-                                          position=(int(self.options["lvl_x_coord"]),
-                                                    int(self.options["lvl_y_coord"])),
-                                          label_font=fonts.Bold, text_font=fonts.Medium))
-        ui.add_element('Exp', LabeledValue(color=BLACK, label='Exp', value="0",
-                                           position=(int(self.options["exp_x_coord"]),
-                                                     int(self.options["exp_y_coord"])),
-                                           label_font=fonts.Bold, text_font=fonts.Medium))
-        ui.add_element('Age', LabeledValue(color=BLACK, label='Age', value="0",
-                                           position=(int(self.options["age_x_coord"]),
-                                                     int(self.options["age_y_coord"])),
-                                           label_font=fonts.Bold, text_font=fonts.Medium))
+        ui.add_element('Lv', LabeledValue(color=BLACK, label='Lv', 
+value="0",
+                                          
+position=(int(self.options["lvl_x_coord"]),
+                                                    
+int(self.options["lvl_y_coord"])),
+                                          label_font=fonts.Bold, 
+text_font=fonts.Medium))
+        ui.add_element('Exp', LabeledValue(color=BLACK, label='Exp', 
+value="0",
+                                           
+position=(int(self.options["exp_x_coord"]),
+                                                     
+int(self.options["exp_y_coord"])),
+                                           label_font=fonts.Bold, 
+text_font=fonts.Medium))
+        ui.add_element('Age', LabeledValue(color=BLACK, label='Age', 
+value="0",
+                                           
+position=(int(self.options["age_x_coord"]),
+                                                     
+int(self.options["age_y_coord"])),
+                                           label_font=fonts.Bold, 
+text_font=fonts.Medium))
+    def on_unload(self, ui):
+            ui.remove_element('Lv')
+            ui.remove_element('Exp')
+            ui.remove_element('Age')
 
     def on_ui_update(self, ui):
         self.expneeded = self.calc_exp_needed(self.lv)
         self.percent = int((self.exp / self.expneeded) * 100)
-        bar = self.bar_string(int(self.options["bar_symbols_count"]), self.percent)
+        bar = self.bar_string(int(self.options["bar_symbols_count"]), 
+self.percent)
         self.calc_strength()
 
         ui.set('Lv', "%d" % self.lv)
@@ -253,4 +277,5 @@ class ExpAndAgePlugin(plugins.Plugin):
         bar_char = '▥'
         blank_char = ' '
         bar_length = int(round((symbols_count / 100) * percentage))
-        return '|' + (bar_char * bar_length) + (blank_char * (symbols_count - bar_length)) + '|'
+        return '|' + (bar_char * bar_length) + (blank_char * 
+(symbols_count - bar_length)) + '|'
