@@ -36,6 +36,7 @@ class ExpAndAgePlugin(plugins.Plugin):
     __description__ = 'Tracks EXP and Age for your pwnagotchi.'
 
     def __init__(self):
+#        self.face_levelup = "(≧◡◡≦)"  # Default face for fallback
         self.percent = 0
         self.strength = 1
         self.calculateInitialXP = False
@@ -138,7 +139,13 @@ class ExpAndAgePlugin(plugins.Plugin):
     def display_level_up(self, agent):
         """Displays the level-up message on the screen."""
         view = agent.view()
-        view.set('face', self.face_levelup)
+        # Ensure the face is loaded correctly
+        try:
+            view.set('face', self.face_levelup)
+        except Exception as e:
+            logging.error(TAG + f" Error displaying level-up face: {e}")
+            view.set('face', FACE_LEVELUP)  # Fallback to default face if there's an error
+     
         view.set('status', "Level Up!")
         view.update(force=True)
 
@@ -214,6 +221,9 @@ class ExpAndAgePlugin(plugins.Plugin):
 
     # UI Integration
     def on_ui_setup(self, ui):
+        # Access the configuration after plugin setup
+        self.face_levelup = self.options["levelup"] if "levelup" in self.options else FACE_LEVELUP
+
         ui.add_element('Lv', LabeledValue(color=BLACK, label='Lv', value="0",
                                           position=(int(self.options["lvl_x_coord"]),
                                                     int(self.options["lvl_y_coord"])),
