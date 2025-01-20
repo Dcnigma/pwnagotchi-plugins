@@ -61,7 +61,7 @@ After installing the plugin, the following information will be displayed on your
 ## Logging
 The plugin logs important events such as loading errors and updates to the age and EXP. You can view the logs using the following command:
 ```bash
-tail -f /var/log/pwnagotchi.log
+tail -f /etc/pwnagotchi/log/pwnagotchi.log
 ```
 ## Known Issues
 - The age calculation may have issues with time zone changes.
